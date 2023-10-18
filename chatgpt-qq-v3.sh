@@ -1,5 +1,5 @@
 # 安装路径
-INSTALL_DIR=./chatgpt-qq
+INSTALL_DIR=./chatgpt-qq-v3
 
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -59,41 +59,12 @@ if [ -d $INSTALL_DIR ]; then
     exit 1
 fi
 
-ask_openai_api() {
-  read -p "请输入 OpenAI 的 API Key：" OPENAI_API_KEY
-  cat >> $INSTALL_DIR/config.cfg << EOF
-[openai]
-[[openai.accounts]]
-api_key = "${OPENAI_API_KEY}"
-EOF
-}
-
-ask_openai_email() {
-  read -p "请输入 OpenAI 的邮箱地址：" OPENAI_EMAIL
-  read -p "请输入 OpenAI 的密码：" OPENAI_PASSWORD
-  cat >> $INSTALL_DIR/config.cfg << EOF
-[openai]
-[[openai.accounts]]
-email = "${OPENAI_ACCESS_TOKEN}"
-password = "${OPENAI_PASSWORD}"
-EOF
-}
-
-ask_openai_access_token() {
-  echo "使用方法：https://chatgpt-qq.lss233.com/pei-zhi-wen-jian-jiao-cheng/jie-ru-ai-ping-tai/jie-ru-openai-de-chatgpt"
-  read -p "请输入 OpenAI 的 access_token：" OPENAI_ACCESS_TOKEN
-  cat >> $INSTALL_DIR/config.cfg << EOF
-[openai]
-[[openai.accounts]]
-access_token = "${OPENAI_ACCESS_TOKEN}"
-EOF
-}
 
 ask_qq() {
   read -p "请输入机器人 QQ 账号：" QQ_ACCOUNT
   read -p "请输入机器人 QQ 密码：" QQ_PASSWORD
   read -p "请输入你自己的 QQ 账号（设置机器人管理员）：" QQ_MANAGER_ACCOUNT
-
+  read -p "请输入服务器 IP 地址（如127.0.0.1）：" IP_ADDRESS
 }
 
 download_browser_edition() {
@@ -194,15 +165,15 @@ database: # 数据库相关设置
 # 连接服务列表
 servers:
   - ws-reverse:
-      universal: ws://chatgpt:8554/ws
+      universal: ws://${IP_ADDRESS}:8554/ws
 
 EOF
   cat >> $INSTALL_DIR/config.cfg << EOF
 [onebot]
-qq=${QQ_ACCOUNT}
 manager_qq=${QQ_MANAGER_ACCOUNT}
-# 此处保持默认设置，无需修改
-reverse_ws_port = 8554
+[http]
+host = "${IP_ADDRESS}"
+port = 8554
 EOF
 
 }
@@ -220,19 +191,6 @@ download_browser_edition
 ask_qq
 configure_gocqhttp
 
-
-echo -e "${GREEN}请选择你的 OpenAI 登录方式：${PLAIN}"
-echo -e "${GREEN}如果你想接入其他 AI，请阅读项目文档。${PLAIN}"
-echo "1) accessToken 登录 （网页版 ChatGPT、Plus）"
-echo "2) api_key 登录 （API 版 ChatGPT）"
-while true; do
-  read -p "你的选择： " yn
-  case $yn in
-      1 ) ask_openai_access_token; break;;
-      2 ) ask_openai_api; break;;
-      * ) echo "请输入对应的数字";;
-  esac
-done
 
 cd $INSTALL_DIR
 
