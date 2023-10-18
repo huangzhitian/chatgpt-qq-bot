@@ -99,7 +99,7 @@ ask_qq() {
 download_browser_edition() {
   mkdir -p $INSTALL_DIR/presets
 
-  wget -O $INSTALL_DIR/docker-compose.yaml https://raw.githubusercontent.com/lss233/chatgpt-mirai-qq-bot/browser-version/docker-compose.go-cqhttp.yaml
+  wget -O $INSTALL_DIR/docker-compose.yaml https://raw.githubusercontent.com/huangzhitian/chatgpt-qq-bot/main/docker-compose.yaml
   wget -O /tmp/awesome-chatgpt-qq-presets-presets.tar.gz https://github.com/lss233/awesome-chatgpt-qq-presets/archive/refs/heads/master.tar.gz
   tar -xzf /tmp/awesome-chatgpt-qq-presets-presets.tar.gz -C $INSTALL_DIR/presets --strip-components=1
 }
